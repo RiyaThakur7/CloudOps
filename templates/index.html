@@ -1,0 +1,1458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CloudOps | Infrastructure Monitoring</title>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+            font-size: 13px;
+        }
+
+        body {
+            background: #f3f5fa;
+            color: #172b4d;
+        }
+
+        .layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            width: 225px;
+            background: #172b4d;
+            color: white;
+            padding: 22px 13px;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: bold;
+            padding: 10px 15px 35px;
+        }
+
+        .logo span {
+            color: #54b5ff;
+        }
+
+        .nav-title {
+            color: #9caec7;
+            font-size: 12px;
+            padding: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 11px 13px;
+            margin-bottom: 7px;
+            color: #dce5f3;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: #29466e;
+            color: white;
+        }
+
+        .nav-item i {
+            width: 19px;
+            height: 19px;
+        }
+
+        .sidebar-footer {
+            position: absolute;
+            bottom: 25px;
+            left: 25px;
+            color: #9caec7;
+            font-size: 12px;
+        }
+
+        /* MAIN CONTENT */
+        .main {
+            margin-left: 225px;
+            width: calc(100% - 225px);
+            padding: 25px 28px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .topbar h1 {
+            font-size: 26px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #71829b;
+            font-size: 13px;
+        }
+
+        .live-badge {
+            background: #dcfce7;
+            color: #15803d;
+            padding: 9px 15px;
+            border-radius: 30px;
+            font-size: 13px;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .section-heading {
+            font-size: 19px;
+            margin-bottom: 18px;
+        }
+
+        /* CARDS */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+            margin-bottom: 30px;
+        }
+
+        .grid.two {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .card {
+            background: white;
+            border: 1px solid #e0e5ed;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 18px;
+        }
+
+        .card h3 {
+            font-size: 17px;
+            margin-bottom: 18px;
+        }
+
+        .metric-label {
+            color: #71829b;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .metric-value {
+            font-size: 29px;
+            font-weight: bold;
+            margin-bottom: 18px;
+        }
+
+        .metric-icon {
+            width: 43px;
+            height: 43px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: #e8f1ff;
+            color: #2563eb;
+        }
+
+        .progress {
+            height: 8px;
+            background: #e8edf4;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 0%;
+            background: #2563eb;
+            border-radius: 10px;
+            transition: width 0.5s;
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #edf0f5;
+            gap: 15px;
+        }
+
+        .status-row:last-child {
+            border-bottom: none;
+        }
+
+        .status {
+            font-weight: bold;
+        }
+
+        .healthy {
+            color: #16a34a;
+        }
+
+        .danger {
+            color: #dc2626;
+        }
+
+        .warning {
+            color: #d97706;
+        }
+
+        .neutral {
+            color: #64748b;
+        }
+
+        /* HEALTH PAGE */
+        .health-info {
+            color: #71829b;
+            line-height: 1.6;
+            font-size: 13px;
+        }
+
+        .diagnosis-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .diagnosis-title i {
+            width: 30px;
+            height: 30px;
+        }
+
+        .diagnosis-message {
+            font-weight: bold;
+            text-align: right;
+            max-width: 65%;
+        }
+
+        .checked-time {
+            color: #71829b;
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        /* TABLE */
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+        }
+
+        th, td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid #edf0f5;
+        }
+
+        th {
+            color: #64748b;
+            background: #f8fafc;
+            font-size: 13px;
+        }
+
+        td {
+            font-size: 13px;
+        }
+
+        /* ALERTS */
+        .alert-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 13px;
+            border: 1px solid #e5eaf1;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+
+        .alert-item i {
+            color: #d97706;
+            flex-shrink: 0;
+        }
+
+        .empty-message {
+            color: #71829b;
+            padding: 15px 0;
+        }
+
+        .refresh-note {
+            color: #71829b;
+            font-size: 13px;
+            margin-top: 15px;
+        }
+
+        /* SELF-HEALING */
+        .recovery-banner {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 16px 18px;
+            border: 1px solid #dbe4ef;
+            border-radius: 10px;
+            background: #f8fafc;
+            margin-bottom: 18px;
+        }
+
+        .recovery-banner h3 {
+            margin: 0 0 6px;
+            font-size: 15px;
+        }
+
+        .recovery-banner p {
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .recovery-status {
+            display: inline-flex;
+            align-items: center;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background: #e2e8f0;
+            color: #334155;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .recovery-status.good {
+            background: #dcfce7;
+            color: #15803d;
+        }
+
+        .recovery-status.bad {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .recovery-status.pending {
+            background: #fef3c7;
+            color: #b45309;
+        }
+
+        .recovery-summary {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .recovery-stat {
+            background: #fff;
+            border: 1px solid #e0e5ed;
+            border-radius: 10px;
+            padding: 16px;
+        }
+
+        .recovery-stat .label {
+            color: #71829b;
+            font-size: 12px;
+            margin-bottom: 7px;
+        }
+
+        .recovery-stat .value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #172b4d;
+            overflow-wrap: anywhere;
+        }
+
+        @media(max-width: 700px) {
+            .recovery-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .recovery-banner {
+                flex-direction: column;
+            }
+        }
+
+        /* RESPONSIVE */
+        @media(max-width: 1000px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width: 700px) {
+            .sidebar {
+                width: 65px;
+                padding: 20px 8px;
+            }
+
+            .logo {
+                font-size: 0;
+                padding: 10px;
+            }
+
+            .logo span {
+                font-size: 22px;
+            }
+
+            .nav-title,
+            .nav-item span,
+            .sidebar-footer {
+                display: none;
+            }
+
+            .nav-item {
+                justify-content: center;
+                padding: 14px 8px;
+            }
+
+            .main {
+                margin-left: 65px;
+                width: calc(100% - 65px);
+                padding: 20px 12px;
+            }
+
+            .grid,
+            .grid.two {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar h1 {
+                font-size: 21px;
+            }
+
+            .diagnosis-message {
+                max-width: 60%;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">Cloud<span>Ops</span></div>
+
+        <div class="nav-title">Main Menu</div>
+
+        <div class="nav-item active" onclick="showPage('overview', this)">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Overview</span>
+        </div>
+
+        <div class="nav-item" onclick="showPage('metrics', this)">
+            <i data-lucide="activity"></i>
+            <span>System Metrics</span>
+        </div>
+
+        <div class="nav-item" onclick="showPage('history', this)">
+            <i data-lucide="history"></i>
+            <span>Monitoring History</span>
+        </div>
+
+        <div class="nav-item" onclick="showPage('health', this)">
+            <i data-lucide="heart-pulse"></i>
+            <span>Application Health</span>
+        </div>
+
+        <div class="nav-item" onclick="showPage('alerts', this)">
+            <i data-lucide="bell"></i>
+            <span>Alerts</span>
+        </div>
+
+        <div class="nav-item" onclick="showPage('recovery', this)">
+            <i data-lucide="shield-check"></i>
+            <span>Self-Healing & Recovery</span>
+        </div>
+
+        <div class="sidebar-footer">
+            CloudOps Monitoring System<br>
+            Version 1.0
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <header class="topbar">
+            <div>
+                <h1 id="page-title">Dashboard Overview</h1>
+                <p class="subtitle" id="page-subtitle">
+                    Cloud infrastructure monitoring and management
+                </p>
+            </div>
+
+            <div class="live-badge">
+                ● LIVE MONITORING
+            </div>
+        </header>
+
+        <!-- OVERVIEW PAGE -->
+        <section class="page active" id="overview">
+
+            <h2 class="section-heading">System Overview</h2>
+
+            <div class="grid">
+
+                <div class="card">
+                    <div class="metric-icon">
+                        <i data-lucide="cpu"></i>
+                    </div>
+                    <div class="metric-label">CPU Usage</div>
+                    <div class="metric-value" id="overview-cpu">--%</div>
+                    <div class="progress">
+                        <div class="progress-fill" id="overview-cpu-bar"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="metric-icon">
+                        <i data-lucide="memory-stick"></i>
+                    </div>
+                    <div class="metric-label">RAM Usage</div>
+                    <div class="metric-value" id="overview-ram">--%</div>
+                    <div class="progress">
+                        <div class="progress-fill" id="overview-ram-bar"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="metric-icon">
+                        <i data-lucide="hard-drive"></i>
+                    </div>
+                    <div class="metric-label">Disk Usage</div>
+                    <div class="metric-value" id="overview-disk">--%</div>
+                    <div class="progress">
+                        <div class="progress-fill" id="overview-disk-bar"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <h2 class="section-heading">Application Status</h2>
+
+            <div class="grid two">
+
+                <div class="card">
+                    <h3>CloudOps Backend</h3>
+                    <div class="status-row">
+                        <span>Status</span>
+                        <span class="status neutral" id="overview-backend">
+                            Checking...
+                        </span>
+                    </div>
+                    <div class="status-row">
+                        <span>Address</span>
+                        <span>127.0.0.1:5000</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Sample Application</h3>
+                    <div class="status-row">
+                        <span>Status</span>
+                        <span class="status neutral" id="overview-app">
+                            Checking...
+                        </span>
+                    </div>
+                    <div class="status-row">
+                        <span>Docker Container</span>
+                        <span>cloudops-sample</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <h3>Current Alerts</h3>
+                <div id="overview-alerts" class="empty-message">
+                    Loading alerts...
+                </div>
+            </div>
+
+        </section>
+
+        <!-- SYSTEM METRICS PAGE -->
+        <section class="page" id="metrics">
+
+            <h2 class="section-heading">System Resource Monitoring</h2>
+
+            <div class="grid">
+
+                <div class="card">
+                    <div class="metric-icon">
+                        <i data-lucide="cpu"></i>
+                    </div>
+                    <div class="metric-label">CPU Usage</div>
+                    <div class="metric-value" id="detail-cpu">--%</div>
+                    <div class="progress">
+                        <div class="progress-fill" id="detail-cpu-bar"></div>
+                    </div>
+                    <p class="refresh-note">Threshold: 80%</p>
+                </div>
+
+                <div class="card">
+                    <div class="metric-icon">
+                        <i data-lucide="memory-stick"></i>
+                    </div>
+                    <div class="metric-label">RAM Usage</div>
+                    <div class="metric-value" id="detail-ram">--%</div>
+                    <div class="progress">
+                        <div class="progress-fill" id="detail-ram-bar"></div>
+                    </div>
+                    <p class="refresh-note">Threshold: 80%</p>
+                </div>
+
+                <div class="card">
+                    <div class="metric-icon">
+                        <i data-lucide="hard-drive"></i>
+                    </div>
+                    <div class="metric-label">Disk Usage</div>
+                    <div class="metric-value" id="detail-disk">--%</div>
+                    <div class="progress">
+                        <div class="progress-fill" id="detail-disk-bar"></div>
+                    </div>
+                    <p class="refresh-note">Threshold: 90%</p>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <h3>Monitoring Information</h3>
+                <p class="health-info">
+                    CloudOps collects CPU, RAM and disk usage from the
+                    local Windows system using Python system monitoring
+                    libraries.
+                </p>
+                <p class="refresh-note" id="metrics-time">
+                    Last updated: Waiting...
+                </p>
+            </div>
+
+        </section>
+
+        <!-- HISTORY PAGE -->
+        <section class="page" id="history">
+
+            <h2 class="section-heading">Monitoring History</h2>
+
+            <div class="card">
+                <h3>Recent System Metrics</h3>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>CPU</th>
+                                <th>RAM</th>
+                                <th>Disk</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="history-table">
+                            <tr>
+                                <td colspan="5">Loading history...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="refresh-note">
+                    Showing the latest 50 monitoring records.
+                </p>
+            </div>
+
+        </section>
+
+        <!-- APPLICATION HEALTH PAGE -->
+        <section class="page" id="health">
+
+            <h2 class="section-heading">
+                Application Health Monitoring
+            </h2>
+
+            <div class="grid two">
+
+                <div class="card">
+                    <h3>CloudOps Backend</h3>
+
+                    <div class="status-row">
+                        <span>Status</span>
+                        <span class="status neutral" id="backend-status">
+                            Checking...
+                        </span>
+                    </div>
+
+                    <div class="status-row">
+                        <span>Address</span>
+                        <span>127.0.0.1:5000</span>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Sample Application</h3>
+
+                    <div class="status-row">
+                        <span>Status</span>
+                        <span class="status neutral" id="application-status">
+                            Checking...
+                        </span>
+                    </div>
+
+                    <div class="status-row">
+                        <span>Address</span>
+                        <span>127.0.0.1:5001</span>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <h3>Monitoring Information</h3>
+
+                <p class="health-info">
+                    CloudOps continuously checks the health endpoint
+                    of the Sample Application and inspects its actual
+                    Docker container status.
+
+                    If the container stops or the application becomes
+                    unhealthy, CloudOps detects the problem.
+                </p>
+            </div>
+
+            <div class="card">
+
+                <div class="diagnosis-title">
+                    <i data-lucide="stethoscope"></i>
+                    <h3 style="margin: 0;">Failure Diagnosis</h3>
+                </div>
+
+                <div class="status-row">
+                    <span>Detected Problem</span>
+                    <span class="diagnosis-message" id="diagnosis">
+                        Checking...
+                    </span>
+                </div>
+
+                <div class="status-row">
+                    <span>Suggested Solution</span>
+                    <span class="diagnosis-message" id="solution">
+                        Checking...
+                    </span>
+                </div>
+
+                <p class="checked-time" id="diagnosis-time">
+                    Last checked: Waiting...
+                </p>
+
+            </div>
+
+        </section>
+
+        <!-- SELF-HEALING & RECOVERY PAGE -->
+        <section class="page" id="recovery">
+
+            <h2 class="section-heading">Self-Healing & Recovery</h2>
+
+            <div class="recovery-banner">
+                <div>
+                    <h3>Automatic Recovery Monitor</h3>
+                    <p id="recovery-message">
+                        Waiting for recovery information...
+                    </p>
+                </div>
+
+                <span class="recovery-status" id="recovery-status-badge">
+                    Checking
+                </span>
+            </div>
+
+            <div class="recovery-summary">
+
+                <div class="recovery-stat">
+                    <div class="label">Recovery Attempts</div>
+                    <div class="value" id="recovery-attempts">--</div>
+                </div>
+
+                <div class="recovery-stat">
+                    <div class="label">Monitored Container</div>
+                    <div class="value">cloudops-sample</div>
+                </div>
+
+                <div class="recovery-stat">
+                    <div class="label">Last Status Update</div>
+                    <div class="value" id="recovery-updated">--</div>
+                </div>
+
+            </div>
+
+            <div class="card">
+                <h3>How Self-Healing Works</h3>
+
+                <p class="health-info">
+                    CloudOps detects when the monitored Docker container
+                    stops or its health endpoint becomes unavailable.
+                    It displays a recovery notification, waits 10 seconds,
+                    then attempts to restart the existing container.
+                    The system verifies application health and records
+                    the recovery result. A maximum of two restart attempts
+                    are allowed for a recovery event.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3>Recovery History</h3>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Container</th>
+                                <th>Problem</th>
+                                <th>Result</th>
+                                <th>Attempts</th>
+                                <th>Timestamp</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="recovery-history-table">
+                            <tr>
+                                <td colspan="6">Loading recovery history...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="refresh-note">
+                    Showing the latest 20 recovery events.
+                </p>
+            </div>
+
+        </section>
+
+        <!-- ALERTS PAGE -->
+        <section class="page" id="alerts">
+
+            <h2 class="section-heading">System Alerts</h2>
+
+            <div class="card">
+                <h3>Current Resource Alerts</h3>
+
+                <div id="alerts-list">
+                    <p class="empty-message">Loading alerts...</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Alert Thresholds</h3>
+
+                <div class="status-row">
+                    <span>CPU Usage</span>
+                    <strong>Above 80%</strong>
+                </div>
+
+                <div class="status-row">
+                    <span>RAM Usage</span>
+                    <strong>Above 80%</strong>
+                </div>
+
+                <div class="status-row">
+                    <span>Disk Usage</span>
+                    <strong>Above 90%</strong>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+</div>
+
+<script>
+
+    // --------------------------------
+    // PAGE NAVIGATION
+    // --------------------------------
+
+    const pageInformation = {
+        overview: {
+            title: "Dashboard Overview",
+            subtitle: "Cloud infrastructure monitoring and management"
+        },
+
+        metrics: {
+            title: "System Metrics",
+            subtitle: "Live CPU, RAM and disk monitoring"
+        },
+
+        history: {
+            title: "Monitoring History",
+            subtitle: "Historical system performance records"
+        },
+
+        health: {
+            title: "Application Health",
+            subtitle: "Cloud infrastructure monitoring and management"
+        },
+
+        alerts: {
+            title: "System Alerts",
+            subtitle: "Resource alerts and monitoring thresholds"
+        },
+
+        recovery: {
+            title: "Self-Healing & Recovery",
+            subtitle: "Automatic container recovery and event history"
+        }
+    };
+
+
+    function showPage(pageId, element) {
+
+        document.querySelectorAll(".page").forEach(page => {
+            page.classList.remove("active");
+        });
+
+        document.querySelectorAll(".nav-item").forEach(item => {
+            item.classList.remove("active");
+        });
+
+        document.getElementById(pageId).classList.add("active");
+
+        if (element) {
+            element.classList.add("active");
+        }
+
+        document.getElementById("page-title").textContent =
+            pageInformation[pageId].title;
+
+        document.getElementById("page-subtitle").textContent =
+            pageInformation[pageId].subtitle;
+
+        if (pageId === "history") {
+            loadHistory();
+        }
+
+        if (pageId === "health") {
+            loadApplicationStatus();
+            loadDiagnosis();
+        }
+
+        if (pageId === "recovery") {
+            loadRecoveryStatus();
+            loadRecoveryHistory();
+        }
+    }
+
+
+    // --------------------------------
+    // UPDATE METRIC CARDS
+    // --------------------------------
+
+    function updateMetric(value, valueId, barId) {
+
+        document.getElementById(valueId).textContent =
+            value.toFixed(1) + "%";
+
+        document.getElementById(barId).style.width =
+            Math.min(value, 100) + "%";
+    }
+
+
+    // --------------------------------
+    // LOAD SYSTEM METRICS
+    // --------------------------------
+
+    async function loadMetrics() {
+
+        try {
+
+            const response = await fetch("/metrics");
+
+            if (!response.ok) {
+                throw new Error("Metrics API failed");
+            }
+
+            const data = await response.json();
+
+            updateMetric(data.cpu, "overview-cpu", "overview-cpu-bar");
+            updateMetric(data.ram, "overview-ram", "overview-ram-bar");
+            updateMetric(data.disk, "overview-disk", "overview-disk-bar");
+
+            updateMetric(data.cpu, "detail-cpu", "detail-cpu-bar");
+            updateMetric(data.ram, "detail-ram", "detail-ram-bar");
+            updateMetric(data.disk, "detail-disk", "detail-disk-bar");
+
+            document.getElementById("metrics-time").textContent =
+                "Last updated: " + data.timestamp;
+
+            displayAlerts(data.alerts || []);
+
+        } catch (error) {
+
+            console.error("Metrics error:", error);
+
+        }
+    }
+
+
+    // --------------------------------
+    // DISPLAY ALERTS
+    // --------------------------------
+
+    function displayAlerts(alerts) {
+
+        const overview = document.getElementById("overview-alerts");
+        const alertsList = document.getElementById("alerts-list");
+
+        if (alerts.length === 0) {
+
+            overview.innerHTML =
+                '<p class="empty-message">No active resource alerts. All monitored resources are within their configured thresholds.</p>';
+
+            alertsList.innerHTML =
+                '<p class="empty-message">No active alerts.</p>';
+
+            return;
+        }
+
+        overview.innerHTML = alerts.map(alert => `
+            <div class="alert-item">
+                <i data-lucide="alert-triangle"></i>
+                <span>${escapeHTML(alert)}</span>
+            </div>
+        `).join("");
+
+        alertsList.innerHTML = overview.innerHTML;
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+    }
+
+
+    // --------------------------------
+    // CLOUDOPS BACKEND STATUS
+    // --------------------------------
+
+    async function loadBackendStatus() {
+
+        const elements = [
+            document.getElementById("overview-backend"),
+            document.getElementById("backend-status")
+        ];
+
+        try {
+
+            const response = await fetch("/health");
+
+            if (!response.ok) {
+                throw new Error("Backend health check failed");
+            }
+
+            const data = await response.json();
+
+            const status = data.status === "healthy"
+                ? "Healthy"
+                : "Unhealthy";
+
+            elements.forEach(element => {
+
+                element.textContent = status;
+
+                element.className =
+                    "status " +
+                    (status === "Healthy" ? "healthy" : "danger");
+
+            });
+
+        } catch (error) {
+
+            elements.forEach(element => {
+                element.textContent = "Down";
+                element.className = "status danger";
+            });
+
+        }
+    }
+
+
+    // --------------------------------
+    // DOCKER APPLICATION STATUS
+    // --------------------------------
+
+    async function loadApplicationStatus() {
+
+        const elements = [
+            document.getElementById("overview-app"),
+            document.getElementById("application-status")
+        ];
+
+        try {
+
+            const response = await fetch("/application-status");
+
+            if (!response.ok) {
+                throw new Error("Application status API failed");
+            }
+
+            const data = await response.json();
+
+            const status = data.status || "Unknown";
+
+            elements.forEach(element => {
+
+                element.textContent = status;
+
+                if (status === "Running") {
+                    element.className = "status healthy";
+                }
+                else if (
+                    status === "Down" ||
+                    status === "Not Found" ||
+                    status === "Unhealthy" ||
+                    status === "Docker Unavailable"
+                ) {
+                    element.className = "status danger";
+                }
+                else {
+                    element.className = "status warning";
+                }
+            });
+
+        } catch (error) {
+
+            elements.forEach(element => {
+                element.textContent = "Unknown";
+                element.className = "status warning";
+            });
+
+            console.error("Application status error:", error);
+
+        }
+    }
+
+
+    // --------------------------------
+    // FAILURE DIAGNOSIS
+    // --------------------------------
+
+    async function loadDiagnosis() {
+
+        const problemElement = document.getElementById("diagnosis");
+        const solutionElement = document.getElementById("solution");
+        const timeElement = document.getElementById("diagnosis-time");
+
+        try {
+
+            const response = await fetch("/diagnose");
+
+            if (!response.ok) {
+                throw new Error("Diagnosis API failed");
+            }
+
+            const data = await response.json();
+
+            problemElement.textContent =
+                data.problem || "No diagnosis available.";
+
+            solutionElement.textContent =
+                data.solution || "No solution available.";
+
+            if (data.problem === "No problem detected.") {
+                problemElement.className =
+                    "diagnosis-message healthy";
+            } else {
+                problemElement.className =
+                    "diagnosis-message danger";
+            }
+
+            timeElement.textContent =
+                "Last checked: " +
+                (data.checked_at || "Unknown");
+
+        } catch (error) {
+
+            problemElement.textContent = "Diagnosis unavailable.";
+
+            solutionElement.textContent =
+                "Check whether CloudOps backend is running.";
+
+            problemElement.className =
+                "diagnosis-message danger";
+
+            console.error("Diagnosis error:", error);
+
+        }
+    }
+
+
+    // --------------------------------
+    // MONITORING HISTORY
+    // --------------------------------
+
+    async function loadHistory() {
+
+        const table = document.getElementById("history-table");
+
+        try {
+
+            const response = await fetch("/api/history");
+
+            if (!response.ok) {
+                throw new Error("History API failed");
+            }
+
+            const data = await response.json();
+
+            if (data.length === 0) {
+
+                table.innerHTML = `
+                    <tr>
+                        <td colspan="5">No monitoring records available.</td>
+                    </tr>
+                `;
+
+                return;
+            }
+
+            table.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${Number(item.cpu).toFixed(1)}%</td>
+                    <td>${Number(item.ram).toFixed(1)}%</td>
+                    <td>${Number(item.disk).toFixed(1)}%</td>
+                    <td>${escapeHTML(item.timestamp)}</td>
+                </tr>
+            `).join("");
+
+        } catch (error) {
+
+            table.innerHTML = `
+                <tr>
+                    <td colspan="5">Unable to load monitoring history.</td>
+                </tr>
+            `;
+
+            console.error("History error:", error);
+
+        }
+    }
+
+
+    // --------------------------------
+    // SELF-HEALING & RECOVERY
+    // --------------------------------
+
+    async function loadRecoveryStatus() {
+
+        try {
+
+            const response = await fetch("/api/recovery-status");
+
+            if (!response.ok) {
+                throw new Error("Recovery status API failed");
+            }
+
+            const data = await response.json();
+
+            const badge =
+                document.getElementById("recovery-status-badge");
+
+            const message =
+                document.getElementById("recovery-message");
+
+            badge.textContent = data.status || "Unknown";
+
+            message.textContent =
+                data.message || "No recovery information available.";
+
+            badge.className = "recovery-status";
+
+            const status = (data.status || "").toLowerCase();
+
+            if (
+                status.includes("successful") ||
+                status === "recovered" ||
+                status === "monitoring"
+            ) {
+                badge.classList.add("good");
+            }
+            else if (status.includes("failed")) {
+                badge.classList.add("bad");
+            }
+            else if (
+                status === "waiting" ||
+                status === "recovering"
+            ) {
+                badge.classList.add("pending");
+            }
+
+            document.getElementById("recovery-attempts").textContent =
+                data.attempts ?? 0;
+
+            document.getElementById("recovery-updated").textContent =
+                data.last_updated || "Not yet updated";
+
+        } catch (error) {
+
+            document.getElementById("recovery-status-badge").textContent =
+                "Unavailable";
+
+            document.getElementById("recovery-message").textContent =
+                "Unable to retrieve recovery status. Check the CloudOps backend.";
+
+            console.error("Recovery status error:", error);
+
+        }
+    }
+
+
+    // --------------------------------
+    // RECOVERY HISTORY
+    // --------------------------------
+
+    async function loadRecoveryHistory() {
+
+        const table =
+            document.getElementById("recovery-history-table");
+
+        try {
+
+            const response = await fetch("/api/recovery-logs");
+
+            if (!response.ok) {
+                throw new Error("Recovery history API failed");
+            }
+
+            const data = await response.json();
+
+            if (!data.length) {
+
+                table.innerHTML =
+                    '<tr><td colspan="6">No recovery events recorded yet.</td></tr>';
+
+                return;
+            }
+
+            table.innerHTML = data.map(item => `
+                <tr>
+                    <td>${item.id}</td>
+                    <td>${escapeHTML(item.container_name)}</td>
+                    <td>${escapeHTML(item.problem)}</td>
+                    <td>${escapeHTML(item.status)}</td>
+                    <td>${item.attempts}</td>
+                    <td>${escapeHTML(item.timestamp)}</td>
+                </tr>
+            `).join("");
+
+        } catch (error) {
+
+            table.innerHTML =
+                '<tr><td colspan="6">Unable to load recovery history.</td></tr>';
+
+            console.error("Recovery history error:", error);
+
+        }
+    }
+
+
+    // --------------------------------
+    // BASIC HTML ESCAPING
+    // --------------------------------
+
+    function escapeHTML(value) {
+
+        return String(value).replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[character]);
+
+    }
+
+
+    // --------------------------------
+    // START LIVE MONITORING
+    // --------------------------------
+
+    function startMonitoring() {
+
+        loadMetrics();
+        loadBackendStatus();
+        loadApplicationStatus();
+        loadDiagnosis();
+        loadHistory();
+
+        setInterval(loadMetrics, 5000);
+        setInterval(loadBackendStatus, 10000);
+        setInterval(loadApplicationStatus, 5000);
+        setInterval(loadDiagnosis, 5000);
+
+        loadRecoveryStatus();
+
+        setInterval(loadRecoveryStatus, 5000);
+        setInterval(loadRecoveryHistory, 15000);
+
+    }
+
+
+    // --------------------------------
+    // INITIALIZE DASHBOARD
+    // --------------------------------
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        if (window.lucide) {
+            lucide.createIcons();
+        }
+
+        startMonitoring();
+
+    });
+
+</script>
+
+</body>
+</html>

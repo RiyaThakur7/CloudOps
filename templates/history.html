@@ -1,0 +1,75 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CloudOps Monitoring History</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e293b;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 25px;
+        }
+
+        th, td {
+            padding: 14px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        th {
+            background: #2563eb;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        a {
+            color: #2563eb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>CloudOps Monitoring History</h1>
+
+    <p><a href="/">Back to Dashboard</a></p>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>CPU Usage</th>
+            <th>RAM Usage</th>
+            <th>Disk Usage</th>
+            <th>Timestamp</th>
+        </tr>
+
+        {% for record in records %}
+        <tr>
+            <td>{{ record.id }}</td>
+            <td>{{ record.cpu }}%</td>
+            <td>{{ record.ram }}%</td>
+            <td>{{ record.disk }}%</td>
+            <td>{{ record.timestamp }}</td>
+        </tr>
+        {% endfor %}
+
+    </table>
+
+</body>
+</html>

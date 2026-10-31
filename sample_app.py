@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def home():
-    return "Sample Application is Running!"
+    return "CloudOps - Automatic Deployment Successful!"
 
 @app.route("/health")
 def health():

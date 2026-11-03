@@ -1,9 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CloudOps | Infrastructure Monitoring</title>
+
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -26,6 +28,7 @@
         }
 
         /* SIDEBAR */
+
         .sidebar {
             width: 225px;
             background: #172b4d;
@@ -87,6 +90,7 @@
         }
 
         /* MAIN CONTENT */
+
         .main {
             margin-left: 225px;
             width: calc(100% - 225px);
@@ -134,6 +138,7 @@
         }
 
         /* CARDS */
+
         .grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -232,6 +237,7 @@
         }
 
         /* HEALTH PAGE */
+
         .health-info {
             color: #71829b;
             line-height: 1.6;
@@ -263,6 +269,7 @@
         }
 
         /* TABLE */
+
         .table-container {
             overflow-x: auto;
         }
@@ -290,6 +297,7 @@
         }
 
         /* ALERTS */
+
         .alert-item {
             display: flex;
             align-items: flex-start;
@@ -317,6 +325,7 @@
         }
 
         /* SELF-HEALING */
+
         .recovery-banner {
             display: flex;
             align-items: flex-start;
@@ -352,20 +361,9 @@
             white-space: nowrap;
         }
 
-        .recovery-status.good {
-            background: #dcfce7;
-            color: #15803d;
-        }
-
-        .recovery-status.bad {
-            background: #fee2e2;
-            color: #b91c1c;
-        }
-
-        .recovery-status.pending {
-            background: #fef3c7;
-            color: #b45309;
-        }
+        .recovery-status.good { background: #dcfce7; color: #15803d; }
+        .recovery-status.bad { background: #fee2e2; color: #b91c1c; }
+        .recovery-status.pending { background: #fef3c7; color: #b45309; }
 
         .recovery-summary {
             display: grid;
@@ -395,16 +393,12 @@
         }
 
         @media(max-width: 700px) {
-            .recovery-summary {
-                grid-template-columns: 1fr;
-            }
-
-            .recovery-banner {
-                flex-direction: column;
-            }
+            .recovery-summary { grid-template-columns: 1fr; }
+            .recovery-banner { flex-direction: column; }
         }
 
         /* RESPONSIVE */
+
         @media(max-width: 1000px) {
             .grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -465,6 +459,7 @@
 <div class="layout">
 
     <!-- SIDEBAR -->
+
     <aside class="sidebar">
 
         <div class="logo">Cloud<span>Ops</span></div>
@@ -508,10 +503,13 @@
 
     </aside>
 
+
     <!-- MAIN CONTENT -->
+
     <main class="main">
 
         <header class="topbar">
+
             <div>
                 <h1 id="page-title">Dashboard Overview</h1>
                 <p class="subtitle" id="page-subtitle">
@@ -522,9 +520,12 @@
             <div class="live-badge">
                 ● LIVE MONITORING
             </div>
+
         </header>
 
+
         <!-- OVERVIEW PAGE -->
+
         <section class="page active" id="overview">
 
             <h2 class="section-heading">System Overview</h2>
@@ -564,6 +565,24 @@
                     </div>
                 </div>
 
+            </div>
+
+            <!-- JENKINS DEPLOYMENT STATUS -->
+            <div class="card" id="deployment-card">
+                <h3>Jenkins Deployment Status</h3>
+                <div class="status-row">
+                    <span>Latest Deployment</span>
+                    <strong id="deployment-status" class="neutral">Waiting...</strong>
+                </div>
+                <div class="status-row">
+                    <span>Build Number</span>
+                    <strong id="deployment-build">--</strong>
+                </div>
+                <div class="status-row">
+                    <span>Message</span>
+                    <span id="deployment-message">Waiting for Jenkins deployment.</span>
+                </div>
+                <p class="refresh-note" id="deployment-time">Last deployment: Not yet available</p>
             </div>
 
             <h2 class="section-heading">Application Status</h2>
@@ -609,7 +628,9 @@
 
         </section>
 
+
         <!-- SYSTEM METRICS PAGE -->
+
         <section class="page" id="metrics">
 
             <h2 class="section-heading">System Resource Monitoring</h2>
@@ -668,15 +689,19 @@
 
         </section>
 
+
         <!-- HISTORY PAGE -->
+
         <section class="page" id="history">
 
             <h2 class="section-heading">Monitoring History</h2>
 
             <div class="card">
+
                 <h3>Recent System Metrics</h3>
 
                 <div class="table-container">
+
                     <table>
                         <thead>
                             <tr>
@@ -694,16 +719,20 @@
                             </tr>
                         </tbody>
                     </table>
+
                 </div>
 
                 <p class="refresh-note">
                     Showing the latest 50 monitoring records.
                 </p>
+
             </div>
 
         </section>
 
+
         <!-- APPLICATION HEALTH PAGE -->
+
         <section class="page" id="health">
 
             <h2 class="section-heading">
@@ -713,6 +742,7 @@
             <div class="grid two">
 
                 <div class="card">
+
                     <h3>CloudOps Backend</h3>
 
                     <div class="status-row">
@@ -726,9 +756,12 @@
                         <span>Address</span>
                         <span>127.0.0.1:5000</span>
                     </div>
+
                 </div>
 
+
                 <div class="card">
+
                     <h3>Sample Application</h3>
 
                     <div class="status-row">
@@ -742,11 +775,14 @@
                         <span>Address</span>
                         <span>127.0.0.1:5001</span>
                     </div>
+
                 </div>
 
             </div>
 
+
             <div class="card">
+
                 <h3>Monitoring Information</h3>
 
                 <p class="health-info">
@@ -757,7 +793,9 @@
                     If the container stops or the application becomes
                     unhealthy, CloudOps detects the problem.
                 </p>
+
             </div>
+
 
             <div class="card">
 
@@ -788,7 +826,9 @@
 
         </section>
 
+
         <!-- SELF-HEALING & RECOVERY PAGE -->
+
         <section class="page" id="recovery">
 
             <h2 class="section-heading">Self-Healing & Recovery</h2>
@@ -800,34 +840,28 @@
                         Waiting for recovery information...
                     </p>
                 </div>
-
                 <span class="recovery-status" id="recovery-status-badge">
                     Checking
                 </span>
             </div>
 
             <div class="recovery-summary">
-
                 <div class="recovery-stat">
                     <div class="label">Recovery Attempts</div>
                     <div class="value" id="recovery-attempts">--</div>
                 </div>
-
                 <div class="recovery-stat">
                     <div class="label">Monitored Container</div>
                     <div class="value">cloudops-sample</div>
                 </div>
-
                 <div class="recovery-stat">
                     <div class="label">Last Status Update</div>
                     <div class="value" id="recovery-updated">--</div>
                 </div>
-
             </div>
 
             <div class="card">
                 <h3>How Self-Healing Works</h3>
-
                 <p class="health-info">
                     CloudOps detects when the monitored Docker container
                     stops or its health endpoint becomes unavailable.
@@ -841,7 +875,6 @@
 
             <div class="card">
                 <h3>Recovery History</h3>
-
                 <div class="table-container">
                     <table>
                         <thead>
@@ -854,7 +887,6 @@
                                 <th>Timestamp</th>
                             </tr>
                         </thead>
-
                         <tbody id="recovery-history-table">
                             <tr>
                                 <td colspan="6">Loading recovery history...</td>
@@ -862,28 +894,30 @@
                         </tbody>
                     </table>
                 </div>
-
-                <p class="refresh-note">
-                    Showing the latest 20 recovery events.
-                </p>
+                <p class="refresh-note">Showing the latest 20 recovery events.</p>
             </div>
 
         </section>
 
+
         <!-- ALERTS PAGE -->
+
         <section class="page" id="alerts">
 
             <h2 class="section-heading">System Alerts</h2>
 
             <div class="card">
+
                 <h3>Current Resource Alerts</h3>
 
                 <div id="alerts-list">
                     <p class="empty-message">Loading alerts...</p>
                 </div>
+
             </div>
 
             <div class="card">
+
                 <h3>Alert Thresholds</h3>
 
                 <div class="status-row">
@@ -900,12 +934,15 @@
                     <span>Disk Usage</span>
                     <strong>Above 90%</strong>
                 </div>
+
             </div>
 
         </section>
 
     </main>
+
 </div>
+
 
 <script>
 
@@ -1032,6 +1069,7 @@
             console.error("Metrics error:", error);
 
         }
+
     }
 
 
@@ -1053,6 +1091,7 @@
                 '<p class="empty-message">No active alerts.</p>';
 
             return;
+
         }
 
         overview.innerHTML = alerts.map(alert => `
@@ -1067,6 +1106,7 @@
         if (window.lucide) {
             lucide.createIcons();
         }
+
     }
 
 
@@ -1113,6 +1153,7 @@
             });
 
         }
+
     }
 
 
@@ -1146,17 +1187,16 @@
                 if (status === "Running") {
                     element.className = "status healthy";
                 }
-                else if (
-                    status === "Down" ||
-                    status === "Not Found" ||
-                    status === "Unhealthy" ||
-                    status === "Docker Unavailable"
-                ) {
+                else if (status === "Down" ||
+                         status === "Not Found" ||
+                         status === "Unhealthy" ||
+                         status === "Docker Unavailable") {
                     element.className = "status danger";
                 }
                 else {
                     element.className = "status warning";
                 }
+
             });
 
         } catch (error) {
@@ -1169,6 +1209,7 @@
             console.error("Application status error:", error);
 
         }
+
     }
 
 
@@ -1223,6 +1264,7 @@
             console.error("Diagnosis error:", error);
 
         }
+
     }
 
 
@@ -1253,6 +1295,7 @@
                 `;
 
                 return;
+
             }
 
             table.innerHTML = data.map(item => `
@@ -1276,6 +1319,7 @@
             console.error("History error:", error);
 
         }
+
     }
 
 
@@ -1284,46 +1328,27 @@
     // --------------------------------
 
     async function loadRecoveryStatus() {
-
         try {
-
             const response = await fetch("/api/recovery-status");
-
-            if (!response.ok) {
-                throw new Error("Recovery status API failed");
-            }
+            if (!response.ok) throw new Error("Recovery status API failed");
 
             const data = await response.json();
 
-            const badge =
-                document.getElementById("recovery-status-badge");
-
-            const message =
-                document.getElementById("recovery-message");
+            const badge = document.getElementById("recovery-status-badge");
+            const message = document.getElementById("recovery-message");
 
             badge.textContent = data.status || "Unknown";
-
-            message.textContent =
-                data.message || "No recovery information available.";
+            message.textContent = data.message || "No recovery information available.";
 
             badge.className = "recovery-status";
 
             const status = (data.status || "").toLowerCase();
 
-            if (
-                status.includes("successful") ||
-                status === "recovered" ||
-                status === "monitoring"
-            ) {
+            if (status.includes("successful") || status === "recovered" || status === "monitoring") {
                 badge.classList.add("good");
-            }
-            else if (status.includes("failed")) {
+            } else if (status.includes("failed")) {
                 badge.classList.add("bad");
-            }
-            else if (
-                status === "waiting" ||
-                status === "recovering"
-            ) {
+            } else if (status === "waiting" || status === "recovering") {
                 badge.classList.add("pending");
             }
 
@@ -1334,43 +1359,25 @@
                 data.last_updated || "Not yet updated";
 
         } catch (error) {
-
-            document.getElementById("recovery-status-badge").textContent =
-                "Unavailable";
-
+            document.getElementById("recovery-status-badge").textContent = "Unavailable";
             document.getElementById("recovery-message").textContent =
                 "Unable to retrieve recovery status. Check the CloudOps backend.";
-
             console.error("Recovery status error:", error);
-
         }
     }
 
 
-    // --------------------------------
-    // RECOVERY HISTORY
-    // --------------------------------
-
     async function loadRecoveryHistory() {
-
-        const table =
-            document.getElementById("recovery-history-table");
+        const table = document.getElementById("recovery-history-table");
 
         try {
-
             const response = await fetch("/api/recovery-logs");
-
-            if (!response.ok) {
-                throw new Error("Recovery history API failed");
-            }
+            if (!response.ok) throw new Error("Recovery history API failed");
 
             const data = await response.json();
 
             if (!data.length) {
-
-                table.innerHTML =
-                    '<tr><td colspan="6">No recovery events recorded yet.</td></tr>';
-
+                table.innerHTML = '<tr><td colspan="6">No recovery events recorded yet.</td></tr>';
                 return;
             }
 
@@ -1386,12 +1393,47 @@
             `).join("");
 
         } catch (error) {
-
-            table.innerHTML =
-                '<tr><td colspan="6">Unable to load recovery history.</td></tr>';
-
+            table.innerHTML = '<tr><td colspan="6">Unable to load recovery history.</td></tr>';
             console.error("Recovery history error:", error);
+        }
+    }
 
+
+    // --------------------------------
+    // JENKINS DEPLOYMENT NOTIFICATION
+    // --------------------------------
+
+    async function loadDeploymentStatus() {
+        try {
+            const response = await fetch("/api/deployment-notification");
+            if (!response.ok) throw new Error("Deployment API failed");
+
+            const data = await response.json();
+            const statusElement = document.getElementById("deployment-status");
+
+            statusElement.textContent = data.status || "Unknown";
+            statusElement.className = "status ";
+
+            if (data.status === "SUCCESS") {
+                statusElement.classList.add("healthy");
+            } else if (data.status === "FAILURE") {
+                statusElement.classList.add("danger");
+            } else {
+                statusElement.classList.add("neutral");
+            }
+
+            document.getElementById("deployment-build").textContent =
+                data.build_number ? "#" + data.build_number : "--";
+            document.getElementById("deployment-message").textContent =
+                data.message || "No deployment message available.";
+            document.getElementById("deployment-time").textContent =
+                "Last deployment: " + (data.timestamp || "Not yet available");
+
+        } catch (error) {
+            document.getElementById("deployment-status").textContent = "Unavailable";
+            document.getElementById("deployment-message").textContent =
+                "Unable to retrieve deployment information.";
+            console.error("Deployment notification error:", error);
         }
     }
 
@@ -1423,24 +1465,28 @@
         loadBackendStatus();
         loadApplicationStatus();
         loadDiagnosis();
+
         loadHistory();
 
         setInterval(loadMetrics, 5000);
+
         setInterval(loadBackendStatus, 10000);
+
         setInterval(loadApplicationStatus, 5000);
+
         setInterval(loadDiagnosis, 5000);
 
-        loadRecoveryStatus();
+        loadDeploymentStatus();
+        setInterval(loadDeploymentStatus, 5000);
 
+        loadRecoveryStatus();
         setInterval(loadRecoveryStatus, 5000);
         setInterval(loadRecoveryHistory, 15000);
 
     }
 
 
-    // --------------------------------
     // INITIALIZE DASHBOARD
-    // --------------------------------
 
     document.addEventListener("DOMContentLoaded", () => {
 

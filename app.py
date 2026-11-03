@@ -1,5 +1,5 @@
 
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 import psutil
 import sqlite3
 import requests
@@ -27,6 +27,15 @@ recovery_state = {
 
 recovery_lock = threading.Lock()
 recovery_in_progress = False
+
+# ---------------- DEPLOYMENT NOTIFICATION ----------------
+
+deployment_notification = {
+    "status": "No deployment yet",
+    "message": "Waiting for the first Jenkins deployment.",
+    "build_number": None,
+    "timestamp": None
+}
 
 
 # ---------------- DATABASE ----------------
@@ -303,6 +312,48 @@ def health():
         "status": "healthy",
         "application": "CloudOps"
     })
+
+
+# ---------------- DEPLOYMENT NOTIFICATION API ----------------
+
+@app.route("/api/deployment-notification", methods=["GET", "POST"])
+def deployment_notification_api():
+
+    global deployment_notification
+
+    if request.method == "POST":
+
+        data = request.get_json(silent=True) or {}
+
+        status = data.get("status")
+        message = data.get("message")
+        build_number = data.get("build_number")
+
+        if status not in ["SUCCESS", "FAILURE"]:
+            return jsonify({
+                "error": "Status must be SUCCESS or FAILURE."
+            }), 400
+
+        if not isinstance(message, str) or not message.strip():
+            return jsonify({
+                "error": "A deployment message is required."
+            }), 400
+
+        deployment_notification = {
+            "status": status,
+            "message": message,
+            "build_number": build_number,
+            "timestamp": datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+        }
+
+        return jsonify({
+            "success": True,
+            "notification": deployment_notification
+        })
+
+    return jsonify(deployment_notification)
 
 
 # ---------------- SYSTEM METRICS ----------------
